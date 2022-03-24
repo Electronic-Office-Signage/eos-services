@@ -3,12 +3,13 @@
 # Program: EOS-Services
 # Version: v0.1
 # Description: This project is intended to provide access to the EOS User Database for a web frontend and a Wifi
-# connected Arduino. This is achieved using Flask, as well as a few other packages
-# Performance Notes: Only supply 1 page PDFs, not multipage PDFs
-# Original Source: https://www.geeksforgeeks.org/python-reading-contents-of-pdf-using-ocr-optical-character-recognition/
+# connected Arduino. This is achieved using Flask, mariadb, as well as a few other packages.
 
-# This file reads in scanned PDF receipts, formats the PDF to an XML format, parses the XML for text, and outputs the
-# parsed text file.
+# This creates a Flask web API that will handle HTTP GET and POST methods.The hostname:5000/api/device?dev=##### is the
+# route to use the GET functionality, where # is any numerical digit 0-9. The
+# hostname:5000/api/user?{param1}=*&{param2}=*&{paramN}=* is the route to use the PORT functionality, where each param
+# corresponds to a variable used to insert data into the database. The full parameter list is name, uid, template_id,
+# title_text, title_color, box1_text, box1_color.
 
 ########################################################################################################################
 ################################################## Import Statements ###################################################
