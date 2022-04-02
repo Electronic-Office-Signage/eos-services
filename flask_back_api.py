@@ -17,13 +17,13 @@
 
 import mariadb
 from flask import Flask, request
-from flask_cors import CORS
+#from flask_cors import CORS
 import json
 
 # Initialize environment
 # Creates the Flask App
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+#CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Global Constants:
 # ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------ ------
@@ -76,7 +76,9 @@ def update():
 
     # return the results!
     # Source: https://stackoverflow.com/questions/56554159/typeerror-object-of-type-datetime-is-not-json-serializable-with-serialize-fu
-    return json.dumps(json_data, default=str)
+    response = flask.jsonify(json_data)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 
 # Creates route for device facing interactions
