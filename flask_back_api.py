@@ -83,9 +83,9 @@ def update():
 # Arguments list as follows: name (ONU Username), uid (specified on the back of the device), payload
 @app.route('/api/user', methods=['POST', 'OPTIONS'])
 def insert():
+    args = request.args
 
     if request.method == 'POST':
-        args = request.args
         name = args.get('name')
         uid = args.get('uid')
         templateID = args.get('template_id')
