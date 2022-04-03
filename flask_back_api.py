@@ -16,7 +16,7 @@
 ########################################################################################################################
 
 import mariadb
-from flask import Flask, request
+from flask import Flask, request, make_response
 #from flask_cors import CORS
 
 # Initialize environment
@@ -111,6 +111,7 @@ def insert():
         response = "OK"
 
     if request.method == 'OPTIONS':
+        response = make_response()
         response.headers.add('Access-Control-Allow-Origin', 'eos-services.onu.edu')
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "*")
