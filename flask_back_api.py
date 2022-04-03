@@ -85,16 +85,15 @@ def update():
 @app.route('/api/user', methods=['POST', 'OPTIONS'])
 def insert():
     args = request.args
+    name = args.get('name')
+    uid = args.get('uid')
+    templateID = args.get('template_id')
+    titleText = args.get('title_text')
+    titleColor = args.get('title_color')
+    box1Text = args.get('box1_text')
+    box1Color = args.get('box1_color')
 
     if request.method == 'POST':
-        name = args.get('name')
-        uid = args.get('uid')
-        templateID = args.get('template_id')
-        titleText = args.get('title_text')
-        titleColor = args.get('title_color')
-        box1Text = args.get('box1_text')
-        box1Color = args.get('box1_color')
-
         # Debug Print
         print(name, uid, templateID, titleText, titleColor, box1Text, box1Color)
 
