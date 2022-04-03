@@ -76,7 +76,7 @@ def update():
 
     # return the results!
     # Source: https://stackoverflow.com/questions/56554159/typeerror-object-of-type-datetime-is-not-json-serializable-with-serialize-fu
-    response = flask.jsonify(json_data)
+    response = Flask.jsonify(json_data)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
