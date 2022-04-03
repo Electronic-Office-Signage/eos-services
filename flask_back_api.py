@@ -18,6 +18,7 @@
 import mariadb
 from flask import Flask, request, make_response
 #from flask_cors import CORS
+import json
 
 # Initialize environment
 # Creates the Flask App
@@ -75,7 +76,7 @@ def update():
 
     # return the results!
     # Source: https://stackoverflow.com/questions/56554159/typeerror-object-of-type-datetime-is-not-json-serializable-with-serialize-fu
-    response = Flask.jsonify(json_data)
+    response = json.dumps(json_data, default=str)
     return response
 
 
