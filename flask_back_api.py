@@ -7,7 +7,7 @@
 
 # This creates a Flask web API that will handle HTTP GET and POST methods.The hostname:5000/api/device?dev=##### is the
 # route to use the GET functionality, where # is any numerical digit 0-9. The
-# hostname:5000/api/user?{param1}=*&{param2}=*&{paramN}=* is the route to use the PORT functionality, where each param
+# hostname:5000/api/user?{param1}=*&{param2}=*&{paramN}=* is the route to use the POST functionality, where each param
 # corresponds to a variable used to insert data into the database. The full parameter list is name, uid, template_id,
 # title_text, title_color, box1_text, box1_color.
 
@@ -18,7 +18,6 @@
 import mariadb
 from flask import Flask, request
 #from flask_cors import CORS
-import json
 
 # Initialize environment
 # Creates the Flask App
@@ -78,6 +77,8 @@ def update():
     # Source: https://stackoverflow.com/questions/56554159/typeerror-object-of-type-datetime-is-not-json-serializable-with-serialize-fu
     response = Flask.jsonify(json_data)
     response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add("Access-Control-Allow-Headers", "*")
+    response.headers.add("Access-Control-Allow-Methods", "*")
     return response
 
 
