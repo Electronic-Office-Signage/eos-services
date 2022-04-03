@@ -81,35 +81,41 @@ def update():
 
 # Creates route for device facing interactions
 # Arguments list as follows: name (ONU Username), uid (specified on the back of the device), payload
-@app.route('/api/user', methods=['POST', 'OPTION'])
+@app.route('/api/user', methods=['POST', 'OPTIONS'])
 def insert():
-    args = request.args
-    name = args.get('name')
-    uid = args.get('uid')
-    templateID = args.get('template_id')
-    titleText = args.get('title_text')
-    titleColor = args.get('title_color')
-    box1Text = args.get('box1_text')
-    box1Color = args.get('box1_color')
 
-    # connect to MariaDB instance
-    conn = mariadb.connect(**frontend_config)
-    # create a connection cursor
-    cur = conn.cursor()
-    # execute a SQL Statement
-    # Base Statement:
-    # Source: https://www.geeksforgeeks.org/python-mariadb-insert-into-table-using-pymysql/,
-    # https://www.digitalocean.com/community/tutorials/how-to-store-and-retrieve-data-in-mariadb-using-python-on-ubuntu-18-04,
-    # https://mariadb.com/docs/reference/conpy1.0/,
-    cur.execute("INSERT INTO eos_services.data (name, uid, template_id, title_text, title_color, box1_text, "
-                "box1_color) VALUES (?, ?, ?, ?, ?, ?, ?)", (name, uid, templateID, titleText, titleColor, box1Text,
-                                                             box1Color))
-    conn.commit()
+    if request.method == 'POST':
+        args = request.args
+        name = args.get('name')
+        uid = args.get('uid')
+        templateID = args.get('template_id')
+        titleText = args.get('title_text')
+        titleColor = args.get('title_color')
+        box1Text = args.get('box1_text')
+        box1Color = args.get('box1_color')
 
-    response = "OK"
-    response.headers.add('Access-Control-Allow-Origin', 'eos-services.onu.edu')
-    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-    response.headers.add("Access-Control-Allow-Methods", "*")
+        # connect to MariaDB instance
+        conn = mariadb.connect(**frontend_config)
+        # create a connection cursor
+        cur = conn.cursor()
+        # execute a SQL Statement
+        # Base Statement:
+        # Source: https://www.geeksforgeeks.org/python-mariadb-insert-into-table-using-pymysql/,
+        # https://www.digitalocean.com/community/tutorials/how-to-store-and-retrieve-data-in-mariadb-using-python-on-ubuntu-18-04,
+        # https://mariadb.com/docs/reference/conpy1.0/,
+        cur.execute("INSERT INTO eos_services.data (name, uid, template_id, title_text, title_color, box1_text, "
+                    "box1_color) VALUES (?, ?, ?, ?, ?, ?, ?)", (name, uid, templateID, titleText, titleColor, box1Text,
+                                                                 box1Color))
+        conn.commit()
+
+        response = "OK"
+        
+    if request.method == 'OPTIONS':
+        response = 'OK'
+        response.headers.add('Access-Control-Allow-Origin', 'eos-services.onu.edu')
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "*")
+
     return response
 
 # Attempt to fix Access-Control-Allow-Origin header issue
