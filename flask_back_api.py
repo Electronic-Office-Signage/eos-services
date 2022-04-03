@@ -95,7 +95,7 @@ def insert():
         box1Color = args.get('box1_color')
 
         # Debug Print
-        print(args)
+        print(name, uid, templateID, titleText, titleColor, box1Text, box1Color)
 
         # connect to MariaDB instance
         conn = mariadb.connect(**frontend_config)
