@@ -109,7 +109,7 @@ def insert():
         conn.commit()
 
         response = "OK"
-        
+
     if request.method == 'OPTIONS':
         response = 'OK'
         response.headers.add('Access-Control-Allow-Origin', 'eos-services.onu.edu')
@@ -126,4 +126,4 @@ def insert():
 ######################################################### MAIN #########################################################
 ########################################################################################################################
 
-app.run()
+app.run(host='eos-services.onu.edu')
