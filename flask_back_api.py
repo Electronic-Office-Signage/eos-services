@@ -76,15 +76,12 @@ def update():
     # return the results!
     # Source: https://stackoverflow.com/questions/56554159/typeerror-object-of-type-datetime-is-not-json-serializable-with-serialize-fu
     response = Flask.jsonify(json_data)
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add("Access-Control-Allow-Headers", "*")
-    response.headers.add("Access-Control-Allow-Methods", "*")
     return response
 
 
 # Creates route for device facing interactions
 # Arguments list as follows: name (ONU Username), uid (specified on the back of the device), payload
-@app.route('/api/user', methods=['POST'])
+@app.route('/api/user', methods=['POST', 'OPTION'])
 def insert():
     args = request.args
     name = args.get('name')
@@ -109,7 +106,11 @@ def insert():
                                                              box1Color))
     conn.commit()
 
-    return "OK"
+    response = "OK"
+    response.headers.add('Access-Control-Allow-Origin', 'eos-services.onu.edu')
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+    response.headers.add("Access-Control-Allow-Methods", "*")
+    return response
 
 # Attempt to fix Access-Control-Allow-Origin header issue
 # Source: https://flask-cors.readthedocs.io/en/latest/
