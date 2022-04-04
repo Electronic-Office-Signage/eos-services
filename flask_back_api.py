@@ -79,21 +79,23 @@ def update():
 
 
 # Creates route for device facing interactions
-# Arguments list as follows: name (ONU Username), uid (specified on the back of the device), payload
+# Arguments list as follows: name (ONU Username), uid (specified on the back of the device), and the following payload
+# items.
+# Sources: https://stackoverflow.com/questions/25594893/how-to-enable-cors-in-flask,
+# https://stackoverflow.com/questions/30361460/sending-response-to-options-in-python-flask-application,
+# https://community.cloudflare.com/t/cors-options-request-to-post-xmlhttprequest-fails-preflight-incorrectly/247738/2,
 @app.route('/api/user', methods=['POST', 'OPTIONS'])
 def insert():
-    args = request.args
-    name = args.get('name')
-    uid = args.get('uid')
-    templateID = args.get('template_id')
-    titleText = args.get('title_text')
-    titleColor = args.get('title_color')
-    box1Text = args.get('box1_text')
-    box1Color = args.get('box1_color')
-
     if request.method == 'POST':
-        # Debug Print
-        print(name, uid, templateID, titleText, titleColor, box1Text, box1Color)
+        # Sources: https://flask.palletsprojects.com/en/2.1.x/api/#flask.Request,
+        args = request.get_json()
+        name = args['name']
+        uid = args['uid']
+        templateID = args['template_id']
+        titleText = args['title_text']
+        titleColor = args['title_color']
+        box1Text = args['box1_text']
+        box1Color = args['box1_color']
 
         # connect to MariaDB instance
         conn = mariadb.connect(**frontend_config)
@@ -109,21 +111,24 @@ def insert():
                                                                  box1Color))
         conn.commit()
 
+        # Generate the POST message response
         response = make_response()
+        # Without the following headers, CORS will break the client-side operation.
         response.headers.add('Access-Control-Allow-Origin', '*')
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        response.headers.add("Access-Control-Allow-Methods", "*")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        response.headers.add("Access-Control-Max-Age", "300")
 
     if request.method == 'OPTIONS':
+        # Generate the OPTIONS message response
         response = make_response()
+        # Without the following headers, CORS will break the client-side operation.
         response.headers.add('Access-Control-Allow-Origin', '*')
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        response.headers.add("Access-Control-Allow-Methods", "*")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        response.headers.add("Access-Control-Max-Age", "300")
 
     return response
-
-# Attempt to fix Access-Control-Allow-Origin header issue
-# Source: https://flask-cors.readthedocs.io/en/latest/
 
 
 ########################################################################################################################
