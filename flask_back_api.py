@@ -88,36 +88,41 @@ def update():
 def insert():
     if request.method == 'POST':
         # Sources: https://flask.palletsprojects.com/en/2.1.x/api/#flask.Request,
-        args = request.get_json()
-        name = args['name']
-        uid = args['uid']
-        templateID = args['template_id']
-        titleText = args['title_text']
-        titleColor = args['title_color']
-        box1Text = args['box1_text']
-        box1Color = args['box1_color']
+        try:
+            args = request.get_json()
+            name = args['name']
+            uid = args['uid']
+            templateID = args['template_id']
+            titleText = args['title_text']
+            titleColor = args['title_color']
+            box1Text = args['box1_text']
+            box1Color = args['box1_color']
 
-        # connect to MariaDB instance
-        conn = mariadb.connect(**frontend_config)
-        # create a connection cursor
-        cur = conn.cursor()
-        # execute a SQL Statement
-        # Base Statement:
-        # Source: https://www.geeksforgeeks.org/python-mariadb-insert-into-table-using-pymysql/,
-        # https://www.digitalocean.com/community/tutorials/how-to-store-and-retrieve-data-in-mariadb-using-python-on-ubuntu-18-04,
-        # https://mariadb.com/docs/reference/conpy1.0/,
-        cur.execute("INSERT INTO eos_services.data (name, uid, template_id, title_text, title_color, box1_text, "
-                    "box1_color) VALUES (?, ?, ?, ?, ?, ?, ?)", (name, uid, templateID, titleText, titleColor, box1Text,
-                                                                 box1Color))
-        conn.commit()
+            # connect to MariaDB instance
+            conn = mariadb.connect(**frontend_config)
+            # create a connection cursor
+            cur = conn.cursor()
+            # execute a SQL Statement
+            # Base Statement:
+            # Source: https://www.geeksforgeeks.org/python-mariadb-insert-into-table-using-pymysql/,
+            # https://www.digitalocean.com/community/tutorials/how-to-store-and-retrieve-data-in-mariadb-using-python-on-ubuntu-18-04,
+            # https://mariadb.com/docs/reference/conpy1.0/,
+            cur.execute("INSERT INTO eos_services.data (name, uid, template_id, title_text, title_color, box1_text, "
+                        "box1_color) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        (name, uid, templateID, titleText, titleColor, box1Text,
+                         box1Color))
+            conn.commit()
 
-        # Generate the POST message response
-        response = make_response()
-        # Without the following headers, CORS will break the client-side operation.
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
-        response.headers.add("Access-Control-Max-Age", "300")
+            # Generate the POST message response
+            response = make_response()
+            # Without the following headers, CORS will break the client-side operation.
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+            response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+            response.headers.add("Access-Control-Max-Age", "300")
+
+        except KeyError:
+            response = make_response(400)
 
     if request.method == 'OPTIONS':
         # Generate the OPTIONS message response
