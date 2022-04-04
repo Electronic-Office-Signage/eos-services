@@ -74,10 +74,14 @@ def update():
     for result in rv:
         json_data.append(dict(zip(row_headers, result)))
 
+    # return the results!
+    # Source: https://stackoverflow.com/questions/56554159/typeerror-object-of-type-datetime-is-not-json-serializable-with-serialize-fu
+    response = json.dumps(json_data, default=str)
+
     # Converts DB time (which is in UTC) to Local time (Note that the column for time is hardcoded to 2. This
     # reflects the DB columnar structure.)
     # Source: https://stackoverflow.com/questions/4770297/convert-utc-datetime-string-to-local-datetime
-    db_time = json_data[2]
+    db_time = response["time"]
     from_zone = tz.tzutc()
     to_zone = tz.tzlocal()
 
@@ -86,11 +90,8 @@ def update():
 
     localTime = utc.astimezone(to_zone)
 
-    json_data[2] = localTime
+    response["time"] = localTime
 
-    # return the results!
-    # Source: https://stackoverflow.com/questions/56554159/typeerror-object-of-type-datetime-is-not-json-serializable-with-serialize-fu
-    response = json.dumps(json_data, default=str)
     return response
 
 
