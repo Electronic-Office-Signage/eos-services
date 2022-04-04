@@ -18,8 +18,6 @@
 import mariadb
 from flask import Flask, request, make_response
 import json
-from datetime import datetime
-from dateutil import tz
 
 # Initialize environment
 # Creates the Flask App
@@ -77,21 +75,6 @@ def update():
     # return the results!
     # Source: https://stackoverflow.com/questions/56554159/typeerror-object-of-type-datetime-is-not-json-serializable-with-serialize-fu
     response = json.dumps(json_data, default=str)
-
-    # Converts DB time (which is in UTC) to Local time (Note that the column for time is hardcoded to 2. This
-    # reflects the DB columnar structure.)
-    # Source: https://stackoverflow.com/questions/4770297/convert-utc-datetime-string-to-local-datetime
-    db_time = response["time"]
-    from_zone = tz.tzutc()
-    to_zone = tz.tzlocal()
-
-    utc = datetime.strptime(db_time, '%Y-%m-%d %H:%M:%S')
-    utc = utc.replace(tzinfo=from_zone)
-
-    localTime = utc.astimezone(to_zone)
-
-    response["time"] = localTime
-
     return response
 
 
@@ -141,6 +124,8 @@ def insert():
         except KeyError:
             response = make_response(("Incorrect Payload. Please check that all required payload variables are "
                                       "present and that their names are correct.", 400))
+
+            response = make_response(("Incorrect Payload. Please check that all required payload variables are present.", 400))
             response.headers.add('Access-Control-Allow-Origin', '*')
             response.headers.add("Access-Control-Allow-Headers", "Content-Type")
             response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
