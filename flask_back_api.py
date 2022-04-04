@@ -122,7 +122,7 @@ def insert():
             response.headers.add("Access-Control-Max-Age", "300")
 
         except KeyError:
-            response = make_response(400)
+            response = make_response(("Incorrect Payload. Please check that all required payload variables are present.", 400))
 
     if request.method == 'OPTIONS':
         # Generate the OPTIONS message response
