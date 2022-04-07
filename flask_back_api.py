@@ -1,11 +1,11 @@
 # Author: Timothy Huff
 # Date: February 26, 2022
 # Program: EOS-Services
-# Version: v0.1
+# Version: v0.1.28
 # Description: This project is intended to provide access to the EOS User Database for a web frontend and a Wifi
 # connected Arduino. This is achieved using Flask, mariadb, as well as a few other packages.
 
-# This creates a Flask web API that will handle HTTP GET and POST methods.The hostname:5000/api/device?dev=##### is the
+# This creates a Flask web API that will handle HTTP GET and POST methods. The hostname:5000/api/device?dev=##### is the
 # route to use the GET functionality, where # is any numerical digit 0-9. The
 # hostname:5000/api/user?{param1}=*&{param2}=*&{paramN}=* is the route to use the POST functionality, where each param
 # corresponds to a variable used to insert data into the database. The full parameter list is name, uid, template_id,
@@ -65,6 +65,8 @@ def update():
     # https://stackoverflow.com/questions/70457400/finding-the-latest-record-in-each-window-mariadb-mysql
     cur.execute("SELECT * FROM eos_services.data WHERE `uid` = ? ORDER BY `time` DESC LIMIT 1", (dev_uid,))
 
+    # TODO: Convert time from database to local time of server instance.
+
     # serialize results into JSON
     row_headers = [x[0] for x in cur.description]
     rv = cur.fetchall()
@@ -80,7 +82,7 @@ def update():
 
 # Creates route for device facing interactions
 # Arguments list as follows: name (ONU Username), uid (specified on the back of the device), and the following payload
-# items.
+# items: template ID, Title Text, Title Color (as int), Box1 Text, Box1 Color (as int).
 # Sources: https://stackoverflow.com/questions/25594893/how-to-enable-cors-in-flask,
 # https://stackoverflow.com/questions/30361460/sending-response-to-options-in-python-flask-application,
 # https://community.cloudflare.com/t/cors-options-request-to-post-xmlhttprequest-fails-preflight-incorrectly/247738/2,
@@ -89,6 +91,7 @@ def insert():
     if request.method == 'POST':
         # Sources: https://flask.palletsprojects.com/en/2.1.x/api/#flask.Request,
         try:
+            # TODO: Add functionality to check character limits.
             args = request.get_json()
             name = args['name']
             uid = args['uid']
@@ -115,31 +118,20 @@ def insert():
 
             # Generate the POST message response
             response = make_response()
-            # Without the following headers, CORS will break the client-side operation.
-            response.headers.add('Access-Control-Allow-Origin', '*')
-            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-            response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
-            response.headers.add("Access-Control-Max-Age", "300")
 
         except KeyError:
             response = make_response(("Incorrect Payload. Please check that all required payload variables are "
                                       "present and that their names are correct.", 400))
 
-            response = make_response(("Incorrect Payload. Please check that all required payload variables are present.", 400))
-            response.headers.add('Access-Control-Allow-Origin', '*')
-            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-            response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
-            response.headers.add("Access-Control-Max-Age", "300")
-
     if request.method == 'OPTIONS':
         # Generate the OPTIONS message response
         response = make_response()
-        # Without the following headers, CORS will break the client-side operation.
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
-        response.headers.add("Access-Control-Max-Age", "300")
 
+    # Without the following headers, CORS will break the client-side operation.
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+    response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+    response.headers.add("Access-Control-Max-Age", "300")
     return response
 
 
