@@ -42,6 +42,9 @@ backend_config = {
     'database': 'eos_services'
 }
 
+titleTextInputLimit = 30
+box1TextInputLimit = 140
+
 
 ########################################################################################################################
 ######################################################### UTIL #########################################################
@@ -64,8 +67,6 @@ def update():
     # https://stackoverflow.com/questions/27133374/in-mariadb-how-do-i-select-the-top-10-rows-from-a-table,
     # https://stackoverflow.com/questions/70457400/finding-the-latest-record-in-each-window-mariadb-mysql
     cur.execute("SELECT * FROM eos_services.data WHERE `uid` = ? ORDER BY `time` DESC LIMIT 1", (dev_uid,))
-
-    # TODO: Convert time from database to local time of server instance.
 
     # serialize results into JSON
     row_headers = [x[0] for x in cur.description]
@@ -91,7 +92,6 @@ def insert():
     if request.method == 'POST':
         # Sources: https://flask.palletsprojects.com/en/2.1.x/api/#flask.Request,
         try:
-            # TODO: Add functionality to check character limits.
             args = request.get_json()
             name = args['name']
             uid = args['uid']
@@ -122,6 +122,8 @@ def insert():
         except KeyError:
             response = make_response(("Incorrect Payload. Please check that all required payload variables are "
                                       "present and that their names are correct.", 400))
+        except mariadb.DataError:
+            response = make_response(("Input Error: Character limit exceeded in one or more of the input variables.", 400))
 
     if request.method == 'OPTIONS':
         # Generate the OPTIONS message response
